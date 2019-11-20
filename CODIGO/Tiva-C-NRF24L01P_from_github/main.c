@@ -39,6 +39,15 @@
 struct nrf24l01p nrf;
 uint8_t addresses[][6] = {"1Node","2Node"};
 
+typedef struct {
+   char envio1=;  //posições de protocolo
+   char envio2=0;
+   char enmvio3=0;
+   char envio4=0;
+   char envio5=0;
+
+}envio;
+
 
 /*
 * Function Name: setup()
@@ -103,7 +112,7 @@ int main(void) {
 
 	while(1){
 		if (nrf24l01p_available(&nrf)) {
-			uint32_t got_time;
+			//uint32_t got_time;
 
 			// Variable for the received time stamp
 			while (nrf24l01p_available(&nrf)) {                 // While there is data ready
@@ -111,7 +120,7 @@ int main(void) {
 			}
 
 			nrf24l01p_stop_listening(&nrf);        // First, stop listening so we can talk
-			nrf24l01p_write(&nrf, &got_time, sizeof(uint32_t)); // Send the final one back.
+			nrf24l01p_write(&nrf, &envio, sizeof(envio)); // Send the final one back.
 			nrf24l01p_start_listening(&nrf); // Now, resume listening so we catch the next packets.
 
 		}
