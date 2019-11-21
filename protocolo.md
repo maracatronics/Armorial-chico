@@ -1,17 +1,33 @@
 # Protocolo de comunicação com os robôs
 
-## Computador -> Chicó
+## Radio -> Chicó
 
 Byte | Função              
 -----|---------------------
-  1  | Endereço (3 bits)   
-  "  | Comando  (5 bits)   
-  2  | Velocidade x        
-  3  | Velocidade y        
-  4  | Velocidade angular  
-  5  | Ângulo do chute  (6 bits)
+  1  | Time     (4 bits)
+  "  | Endereço (4 bits)   
+  2  | Comando     
+  3  | Velocidade x        
+  4  | Velocidade y        
+  5  | Velocidade angular  
+  6  | Ângulo do chute  (6 bits)
   "  | Potência (2 bits)   
 
+## Computador -> Rádio
+
+Byte | Função              
+-----|---------------------
+  1  | Time     (4 bits)
+  "  | Endereço (4 bits)   
+  2  | Comando     
+  3  | Velocidade x        
+  4  | Velocidade y        
+  5  | Velocidade angular  
+  6  | Ângulo do chute  (6 bits)
+  "  | Potência (2 bits)
+  ?  | CRC 
+  
+  
 ## Chicó -> computador
 
 Byte | Função              
@@ -19,7 +35,8 @@ Byte | Função
   1  | Endereço (3 bits)   
   "  | Comando  (5 bits)   
   2  | Status da bateria        
-  3  | Presença da bola        
+  3  | Presença da bola  
+  4  | Nº de pacotes perdidos
 
 
 precisamos fazer um CRC nosso, fikcou decidido em reunião 
