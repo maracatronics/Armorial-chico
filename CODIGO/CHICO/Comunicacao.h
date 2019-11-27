@@ -31,11 +31,17 @@ extern struct nrf24l01p radio; //O radio
 //extern uint8_t addresses[][6] = {"1Node","2Node"};
 
 //Bytes do protocolo de comunicacao
-struct Protocolo
+typedef struct
 {
     uint8_t address;
     struct nrf24l01p radio;
-};
+    uint8_t pacote[6];
+    uint8_t pipe;
+
+
+}Protocolo;//Precisa colocar ainda o pipe, pacote como um que é a mensagem,
+           //
+           //
 
 /*
 * Method Name: Protocolo()
@@ -43,7 +49,7 @@ struct Protocolo
 * Output: none
 * - Construtor da classe
 */
-bool  ProtocoloInit(struct Protocolo *RoboCom);
+bool  ProtocoloInit(Protocolo *RoboCom);
 
 /*
 * Method Name: set_address()
@@ -54,7 +60,7 @@ bool  ProtocoloInit(struct Protocolo *RoboCom);
 * Configura o endereco do robo time|add
 * Example Call: set_address();
 */
-bool  ProtocoloSetAddress(struct Protocolo *RoboCom, uint8_t time, uint8_t add);
+bool  ProtocoloSetAddress(Protocolo *RoboCom, uint8_t time, uint8_t add);
 
 
 #endif /* COMUNICACAO_H_ */
