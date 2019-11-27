@@ -16,7 +16,7 @@
 * Output: none
 * - Construtor da classe
 */
-bool ProtocoloInit(struct Protocolo *RoboCom)
+bool ProtocoloInit(Protocolo *RoboCom)
 {
     //Inicializa o radio
     if(!nrf24l01p_setup(&RoboCom->radio, GPIO_PORTA_BASE, GPIO_PIN_6, GPIO_PORTC_BASE, GPIO_PIN_4, SSI0_BASE) )
@@ -37,7 +37,7 @@ bool ProtocoloInit(struct Protocolo *RoboCom)
 * Configura o endereco do robo time|add
 * Example Call: set_address();
 */
-bool ProtocoloSetAddress(struct Protocolo *RoboCom, uint8_t time, uint8_t add)
+bool ProtocoloSetAddress(Protocolo *RoboCom, uint8_t time, uint8_t add)
 {
     uint8_t tempTime = 0;
     uint8_t tempAdd = 0;
