@@ -70,37 +70,45 @@ int main(void) {
 
 	while(1){
 		if (nrf24l01p_available(&nrf)) {
-			uint32_t got_time;
-
+			uint8_t recebido;
+			uint8_t envio;
 			// Variable for the received time stamp
 			while (nrf24l01p_available(&nrf)) {                 // While there is data ready
-				nrf24l01p_read(&nrf, &got_time, sizeof(uint32_t));     // Get the payload
+				nrf24l01p_read(&nrf, &recebido, sizeof(uint8_t));     // Get the payload
 			}
 
 			nrf24l01p_stop_listening(&nrf);        // First, stop listening so we can talk
-			nrf24l01p_write(&nrf, &got_time, sizeof(uint32_t)); // Send the final one back.
+			nrf24l01p_write(&nrf, &envio, sizeof(uint8_t)); // Send the final one back.
 			nrf24l01p_start_listening(&nrf); // Now, resume listening so we catch the next packets.
 
+			if(recebido==0x0F){
+			    GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 255);
+			}else{
+			    GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 0);
+			}
+
+
+
 		}
 
-		//give it a little space
-		SysCtlDelay((SysCtlClockGet() >> 12) * 5);
-
-		// Turn on the LED
-		GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, ui8LED);
-		// Delay for a bit
-		SysCtlDelay(10000000);
-
-		// Cycle through Red, Green and Blue LEDs
-		if (ui8LED == 8+4+2)
-		{
-		     ui8LED = 2;
-		}
-		else
-		{
-
-		    ++ui8LED;
-		}
+//		//give it a little space
+//		SysCtlDelay((SysCtlClockGet() >> 12) * 5);
+//
+//		// Turn on the LED
+//		GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, ui8LED);
+//		// Delay for a bit
+//		SysCtlDelay(10000000);
+//
+//		// Cycle through Red, Green and Blue LEDs
+//		if (ui8LED == 8+4+2)
+//		{
+//		     ui8LED = 2;
+//		}
+//		else
+//		{
+//
+//		    ++ui8LED;
+//		}
 	}
 
 	//return 0;

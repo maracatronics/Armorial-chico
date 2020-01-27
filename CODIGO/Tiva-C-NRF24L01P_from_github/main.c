@@ -39,14 +39,7 @@
 struct nrf24l01p nrf;
 uint8_t addresses[][6] = {"1Node","2Node"};
 
-typedef struct {
-   char envio1=;  //posições de protocolo
-   char envio2=0;
-   char enmvio3=0;
-   char envio4=0;
-   char envio5=0;
 
-}envio;
 
 
 /*
@@ -56,15 +49,15 @@ typedef struct {
 * Description: Set crystal frequency and enable GPIO Peripherals
 * Example Call: setup();
 */
-void setup(void)
-{
-    //
-    // Set the clocking to run directly from the crystal.
-    // Clock to 80MHZ
-    //
-    SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ | SYSCTL_OSC_MAIN);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-}
+//void setup(void)
+//{
+//    //
+//    // Set the clocking to run directly from the crystal.
+//    // Clock to 80MHZ
+//    //
+//    SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ | SYSCTL_OSC_MAIN);
+//    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+//}
 
 /*
 * Function Name: led_pin_config()
@@ -91,7 +84,7 @@ int main(void) {
 	FPUEnable();
 
 
-	setup();
+	setup_tiva();
 
 	IntMasterEnable();
 
@@ -102,7 +95,7 @@ int main(void) {
 		//we couldn't communicate with the radio
 		//return 1;
 	}
-
+	GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, ui8LED);
 	nrf24l01p_set_PA_level(&nrf, RF24_PA_LOW);
 
 	nrf24l01p_open_writing_pipe(&nrf, addresses[0]);
@@ -111,38 +104,40 @@ int main(void) {
 	nrf24l01p_start_listening(&nrf);
 
 	while(1){
+	    uint8_t envio[6]={'m','a','r','a','c','a'};
+	    uint8_t recebimento[5];
 		if (nrf24l01p_available(&nrf)) {
 			//uint32_t got_time;
 
 			// Variable for the received time stamp
 			while (nrf24l01p_available(&nrf)) {                 // While there is data ready
-				nrf24l01p_read(&nrf, &got_time, sizeof(uint32_t));     // Get the payload
+				nrf24l01p_read(&nrf, recebimento, sizeof(recebimento));     // Get the payload
 			}
 
 			nrf24l01p_stop_listening(&nrf);        // First, stop listening so we can talk
 			nrf24l01p_write(&nrf, &envio, sizeof(envio)); // Send the final one back.
 			nrf24l01p_start_listening(&nrf); // Now, resume listening so we catch the next packets.
 
-		}
+
 
 		//give it a little space
 		SysCtlDelay((SysCtlClockGet() >> 12) * 5);
 
 		// Turn on the LED
-		GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3, ui8LED);
+		ui8LED = 255;  //forcei 255 para ligar o led
+		GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, ui8LED);
 		// Delay for a bit
 		SysCtlDelay(10000000);
 
 		// Cycle through Red, Green and Blue LEDs
-		if (ui8LED == 8+4+2)
-		{
-		     ui8LED = 2;
-		}
-		else
-		{
 
-		    ++ui8LED;
+	}	else
+		{
+		    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, ui8LED);
+
 		}
+
+		GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, ui8LED);
 	}
 
 	//return 0;
