@@ -28,7 +28,7 @@
 * Description: Set crystal frequency and enable GPIO Peripherals
 * Example Call: setup();
 */
-void setup(void);
+void setup_tiva(void);
 /*
 * Function Name: led_pin_config()
 * Input: none
@@ -36,7 +36,7 @@ void setup(void);
 * Description: Set PORTF Pin 1, Pin 2, Pin 3 as output. On this pin Red, Blue and Green LEDs are connected.
 * Example Call: led_pin_config();
 */
-void led_pin_config(void);
+//void led_pin_config(void);
 
 
 #endif /* SETUP_H_ */
