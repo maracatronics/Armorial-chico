@@ -10,7 +10,9 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
+"./interrupcao.obj" \
 "./main.obj" \
+"./nrf24l01.obj" \
 "./tm4c123gh6pm_startup_ccs.obj" \
 "C:/Users/Cristiano Pontes/ti/Tivaware_C_Series-1.1/Tivaware-master/driverlib/ccs/Debug/driverlib.lib" \
 "../tm4c123gh6pm.cmd" \
@@ -156,8 +158,8 @@ TIMER_INTERRUPT.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "tm4c123gh6pm_startup_ccs.obj" 
-	-$(RM) "main.d" "tm4c123gh6pm_startup_ccs.d" 
+	-$(RM) "interrupcao.obj" "main.obj" "nrf24l01.obj" "tm4c123gh6pm_startup_ccs.obj" 
+	-$(RM) "interrupcao.d" "main.d" "nrf24l01.d" "tm4c123gh6pm_startup_ccs.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

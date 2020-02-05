@@ -8,6 +8,7 @@
 #include "driverlib/pin_map.h"
 #include "driverlib/gpio.h"
 #include "driverlib/pwm.h"
+#include "ADC.h"
 
 void delayMS(int ms) {
     SysCtlDelay( (SysCtlClockGet()/(3*1000))*ms ) ;
@@ -17,8 +18,8 @@ int
 main(void)
 {
     uint32_t period = 5000; //20ms (16Mhz / 64pwm_divider / 50)
-    uint32_t duty = 250;    //1.5ms pulse width
-
+    uint32_t pui32ADC0Value[2];    //1.5ms pulse width
+  //  uint32_t duty[2] = ADCinit(SYSCTL_PERIPH_GPIOE,GPIO_PORTE_BASE,GPIO_PIN_3|GPIO_PIN_2);
     //Set the clock
    SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC |   SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
 
@@ -28,7 +29,7 @@ main(void)
    // Enable the peripherals used by this program.
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_PWM1);  //The Tiva Launchpad has two modules (0 and 1). Module 1 covers the LED pins
-
+  //  GPIOPinTypeGPIOInput(GPIO_PORTE_BASE, GPIO_PIN_3);
     //Configure PF1,PF2,PF3 Pins as PWM
     GPIOPinConfigure(GPIO_PF1_M1PWM5);
     GPIOPinConfigure(GPIO_PF2_M1PWM6);
@@ -46,32 +47,32 @@ main(void)
     PWMGenPeriodSet(PWM1_BASE, PWM_GEN_3, period);
 
     //Set PWM duty
-    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,duty);
-    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6,duty);
-    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7,duty);
+   // PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,duty[0]);
+//    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6,duty[0]);
+//    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7,duty[0]);
 
     // Enable the PWM generator
     PWMGenEnable(PWM1_BASE, PWM_GEN_2);
-    PWMGenEnable(PWM1_BASE, PWM_GEN_3);
+   // PWMGenEnable(PWM1_BASE, PWM_GEN_3);
 
     // Turn on the Output pins
-    PWMOutputState(PWM1_BASE, PWM_OUT_5_BIT | PWM_OUT_6_BIT | PWM_OUT_7_BIT, true);
+    PWMOutputState(PWM1_BASE, PWM_OUT_5_BIT, true);
 
     while(1)
     {
         delayMS(2000);
-
+        ADCinit(SYSCTL_PERIPH_GPIOE,GPIO_PORTE_BASE,GPIO_PIN_3|GPIO_PIN_2);
         //Drive servo to 135 degrees
-        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,duty+(duty/2));
-        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6,duty+(duty/2));
-        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7,duty+(duty/2));
+        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,pui32ADC0Value[0]+(pui32ADC0Value[0]/2));
+       // PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6,pui32ADC0Value[0]+(pui32ADC0Value[0]/2));
+       // PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7,duty[0]+(duty[0]/2));
 
         delayMS(2000);
 
         //Drive servo to 90 degrees
-        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,duty);
-        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6,duty);
-        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7,duty);
+        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,pui32ADC0Value[0]);
+    //    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6,duty[0]);
+    //    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7,duty[0]);
 
     }
 

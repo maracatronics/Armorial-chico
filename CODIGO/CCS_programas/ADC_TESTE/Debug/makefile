@@ -10,6 +10,7 @@ GEN_OPTS__FLAG :=
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
+"./ADC.obj" \
 "./main.obj" \
 "./tm4c123fh6pm_startup_ccs.obj" \
 "C:/Users/Cristiano Pontes/ti/Tivaware_C_Series-1.1/Tivaware-master/driverlib/ccs/Debug/driverlib.lib" \
@@ -156,8 +157,8 @@ ADC_TESTE.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "tm4c123fh6pm_startup_ccs.obj" 
-	-$(RM) "main.d" "tm4c123fh6pm_startup_ccs.d" 
+	-$(RM) "ADC.obj" "main.obj" "tm4c123fh6pm_startup_ccs.obj" 
+	-$(RM) "ADC.d" "main.d" "tm4c123fh6pm_startup_ccs.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 
