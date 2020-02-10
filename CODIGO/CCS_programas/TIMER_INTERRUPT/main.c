@@ -5,6 +5,8 @@
 #include "driverlib/interrupt.h"
 #include "driverlib/gpio.h"
 #include "driverlib/sysctl.h"
+#include "driverlib/pin_map.h"
+
 int contador = 0;
 void onButtonDown(void);
 void onButtonUp(void);
@@ -18,6 +20,9 @@ void onButtonDown(void) {
             GPIO_RISING_EDGE);          // Configure PF4 for rising edge trigger
         GPIOIntClear(GPIO_PORTF_BASE, GPIO_PIN_4);  // Clear interrupt flag
         ++contador;
+
+       // GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2,255);
+       // SysCtlDelay(1000000);
     }
 }
 
@@ -29,6 +34,7 @@ void onButtonUp(void) {
         GPIOIntTypeSet(GPIO_PORTF_BASE, GPIO_PIN_4,
             GPIO_FALLING_EDGE);         // Configure PF4 for falling edge trigger
         GPIOIntClear(GPIO_PORTF_BASE, GPIO_PIN_4);  // Clear interrupt flag
+       // GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2,255);
     }
 }
 
@@ -37,6 +43,7 @@ int main(void) {
 
     // Pin F4 setup
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);        // Enable port F
+//    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
     GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_4);  // Init PF4 as input
     GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_4,
         GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);  // Enable weak pullup resistor for PF4

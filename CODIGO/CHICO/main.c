@@ -82,9 +82,9 @@ int main(void) {
 			nrf24l01p_start_listening(&nrf); // Now, resume listening so we catch the next packets.
 
 			if(recebido==0x0F){
-			    GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1, 255);
-			}else{
 			    GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 255);
+			}else{
+			    GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 0);
 			}
 
 
