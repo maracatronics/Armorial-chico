@@ -22,7 +22,8 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/adc.h"
 
-uint32_t ADCinit(uint32_t periferico ,uint32_t base , uint8_t pin);
+void ConfigurarADC(uint32_t periferico ,uint32_t base , uint8_t pin);
+uint32_t IniciarADC();
 
 
 #endif /* ADC_H_ */

@@ -9,6 +9,8 @@
 #include "driverlib/gpio.h"
 #include "driverlib/pwm.h"
 #include "ADC.h"
+float cargaCapacitor;
+float constant = 0.059584859584;
 
 void delayMS(int ms) {
     SysCtlDelay( (SysCtlClockGet()/(3*1000))*ms ) ;
@@ -18,10 +20,11 @@ int
 main(void)
 {
     uint32_t period = 5000; //20ms (16Mhz / 64pwm_divider / 50)
-    uint32_t pui32ADC0Value[2];    //1.5ms pulse width
+   // uint32_t pui32ADC0Value[2];    //1.5ms pulse width
   //  uint32_t duty[2] = ADCinit(SYSCTL_PERIPH_GPIOE,GPIO_PORTE_BASE,GPIO_PIN_3|GPIO_PIN_2);
     //Set the clock
    SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC |   SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ);
+   ConfigurarADC(SYSCTL_PERIPH_GPIOE,GPIO_PORTE_BASE,GPIO_PIN_3|GPIO_PIN_2);
 
    //Configure PWM Clock divide system clock by 64
    SysCtlPWMClockSet(SYSCTL_PWMDIV_64);
@@ -60,17 +63,18 @@ main(void)
 
     while(1)
     {
-        delayMS(2000);
-        ADCinit(SYSCTL_PERIPH_GPIOE,GPIO_PORTE_BASE,GPIO_PIN_3|GPIO_PIN_2);
+       // delayMS(2000);
+        cargaCapacitor = constant*IniciarADC();
+        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,cargaCapacitor);
         //Drive servo to 135 degrees
-        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,pui32ADC0Value[0]+(pui32ADC0Value[0]/2));
+      //  PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,ADCget+(ADCget/2));
        // PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6,pui32ADC0Value[0]+(pui32ADC0Value[0]/2));
        // PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7,duty[0]+(duty[0]/2));
 
-        delayMS(2000);
+        //delayMS(2000);
 
         //Drive servo to 90 degrees
-        PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,pui32ADC0Value[0]);
+
     //    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_6,duty[0]);
     //    PWMPulseWidthSet(PWM1_BASE, PWM_OUT_7,duty[0]);
 
