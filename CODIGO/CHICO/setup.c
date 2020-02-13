@@ -23,7 +23,8 @@ void setup(void)
     //
     SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ | SYSCTL_OSC_MAIN);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
-}
+
+   }
 
 /*
 * Function Name: led_pin_config()

@@ -238,7 +238,7 @@ int nrf24l01p_setup(struct nrf24l01p *nrf,
 
 	// Then set the data rate to the slowest (and most reliable) speed supported by all
 	// hardware.
-	nrf24l01p_set_data_rate(nrf, RF24_250KBPS );
+	nrf24l01p_set_data_rate(nrf, RF24_1MBPS );
 
 
 	// Disable dynamic payloads, to match dynamic_payloads_enabled setting - Reset value is 0
