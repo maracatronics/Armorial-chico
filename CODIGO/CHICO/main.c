@@ -1,9 +1,9 @@
+
 /*
 * Aquivo base usando para impementacao do firmware do robo omnidirecional.
 * Autores: Jose Neto, Flavio Candido
 *
 * Autor do projeto que usamos como modelo: Texas Instruments e Saurav Shandilya, Vishwanathan Iyer
-
 * Description: Codigo inicial do firmware do robo  omnidirecional.
 *              Nesta estapa, estamos usando o modelo de projeto apresnetado em:
 *              https://www.cse.iitb.ac.in/~erts/html_pages/resources.html
@@ -27,7 +27,7 @@
 #include "driverlib/interrupt.h"
 #include "driverlib/pin_map.h"
 #include "driverlib/sysctl.h"
-
+#include "driverlib/uart.h"
 #include "nrf24l01.h"
 #include "setup.h"
 #include "Comunicacao.h"
@@ -49,6 +49,27 @@ int main(void) {
     FPUEnable();
 
 
+
+    setup();
+
+    IntMasterEnable();
+
+    led_pin_config();
+
+
+
+    // Kich hoat uart0
+           SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+           SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+           //Cau hinh chan PA0 va PA1 lan luot la chan RX va TX
+           GPIOPinConfigure(GPIO_PA0_U0RX);
+           GPIOPinConfigure(GPIO_PA1_U0TX);
+           GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);  //Thieu dinh nghia pin pa1 pa0 la chan cua UART
+           //Cau hinh uart 0 baud 115200
+           UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 9600, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+
+
+
     setup();
 
     IntMasterEnable();
@@ -63,30 +84,35 @@ int main(void) {
 
     nrf24l01p_set_PA_level(&nrf, RF24_PA_LOW);
 
-    nrf24l01p_open_writing_pipe(&nrf, addresses[0]);
-    nrf24l01p_open_reading_pipe(&nrf, 1,addresses[1]);
+    nrf24l01p_open_writing_pipe(&nrf, addresses[1]);
+    nrf24l01p_open_reading_pipe(&nrf, 1,addresses[0]);
 
-   // nrf24l01p_start_listening(&nrf);
     uint8_t recebido[6];
-    uint8_t envio[] = { ' ','M','A','R','A', 'C','A'} ;
+
+    uint8_t envio[6] = "maraca";
     while(1){
-    //    i = 0;
-    //   while (i < 6) {
-       nrf24l01p_stop_listening(&nrf);        // First, stop listening so we can talk
+
+      nrf24l01p_stop_listening(&nrf);        // First, stop listening so we can talk
         nrf24l01p_write(&nrf, &envio, sizeof(envio)); // Send the final one back.
        nrf24l01p_start_listening(&nrf); // Now, resume listening so we catch the next packets.
 
         if (nrf24l01p_available(&nrf)) {
-  //          uint8_t recebido[6];
-  //          uint8_t envio[6] = {'M','A','R','A', 'C','A'} ;
-            // Variable for the received time stamp
 
                 GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1|GPIO_PIN_3, 0);
                 GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 255);
-              //  SysCtlDelay(5000000);
+               SysCtlDelay(50000);
                 nrf24l01p_read(&nrf, &recebido, sizeof(recebido));     // Get the payload
 
+                UARTCharPut(UART0_BASE, recebido[0]);
+                UARTCharPut(UART0_BASE, recebido[1]);
+                UARTCharPut(UART0_BASE, recebido[2]);
+                UARTCharPut(UART0_BASE, recebido[3]);
+                UARTCharPut(UART0_BASE, recebido[4]);
+                UARTCharPut(UART0_BASE, recebido[5]);
+                UARTCharPut(UART0_BASE, '\n');
 
+                SysCtlDelay(100000);
+                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 0);
       //      nrf24l01p_stop_listening(&nrf);        // First, stop listening so we can talk
       //      nrf24l01p_write(&nrf, &envio, sizeof(envio)); // Send the final one back.
        //     nrf24l01p_start_listening(&nrf); // Now, resume listening so we catch the next packets.
@@ -94,16 +120,16 @@ int main(void) {
 
       //  }
 
-            if(recebido[0]==envio[1]){
-                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 0);
-                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_3, 255);
-               // SysCtlDelay(5000000);
-
-            }else{
-                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 0);
-                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1, 255);
-               // SysCtlDelay(20000000);
-            }
+//            if(recebido[0]==envio[0]){
+//                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 0);
+//                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_3, 255);
+//               // SysCtlDelay(5000000);
+//
+//            }else{
+//                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 0);
+//                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1, 255);
+//               // SysCtlDelay(20000000);
+//            }
 
         }
         }
