@@ -1,60 +1,102 @@
-#include <stdint.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include "inc/hw_memmap.h"
-#include "driverlib/interrupt.h"
-#include "driverlib/gpio.h"
-#include "driverlib/sysctl.h"
-#include "driverlib/pin_map.h"
+    #include <stdint.h>
 
-int contador = 0;
-void onButtonDown(void);
-void onButtonUp(void);
+    #include <stdbool.h>
 
-void onButtonDown(void) {
-    if (GPIOIntStatus(GPIO_PORTF_BASE, false) & GPIO_PIN_4) {
-        // PF4 was interrupt cause
-        printf("Button Down\n");
-        GPIOIntRegister(GPIO_PORTF_BASE, onButtonUp);   // Register our handler function for port F
-        GPIOIntTypeSet(GPIO_PORTF_BASE, GPIO_PIN_4,
-            GPIO_RISING_EDGE);          // Configure PF4 for rising edge trigger
-        GPIOIntClear(GPIO_PORTF_BASE, GPIO_PIN_4);  // Clear interrupt flag
-        ++contador;
+    #include "inc/tm4c123gh6pm.h"
 
-       // GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2,255);
-       // SysCtlDelay(1000000);
+    #include "inc/hw_memmap.h"
+
+    #include "inc/hw_types.h"
+
+    #include "driverlib/sysctl.h"
+
+    #include "driverlib/interrupt.h"
+
+    #include "driverlib/gpio.h"
+
+    #include "driverlib/timer.h"
+
+     volatile bool condicao = true;
+     volatile uint32_t N_eventos = 0;
+
+    int main(void)
+
+    {
+
+        uint32_t ui32Period;
+
+
+        SysCtlClockSet( SYSCTL_SYSDIV_5 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ | SYSCTL_OSC_MAIN );
+
+
+
+        SysCtlPeripheralEnable( SYSCTL_PERIPH_GPIOF );
+
+        GPIOPinTypeGPIOOutput( GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3 );
+
+
+
+        SysCtlPeripheralEnable( SYSCTL_PERIPH_TIMER0 );
+
+        TimerConfigure( TIMER0_BASE, TIMER_CFG_PERIODIC );
+
+
+
+        ui32Period = ( SysCtlClockGet()*0.0005 - 1);
+
+        TimerLoadSet( TIMER0_BASE, TIMER_A, ui32Period - 1 );
+
+
+
+        IntEnable( INT_TIMER0A );
+
+        TimerIntEnable( TIMER0_BASE, TIMER_TIMA_TIMEOUT );
+
+        IntMasterEnable();
+
+
+
+        TimerEnable( TIMER0_BASE, TIMER_A );
+
+
+
+        while( 1 ) {
+
+        }
+
     }
-}
 
-void onButtonUp(void) {
-    if (GPIOIntStatus(GPIO_PORTF_BASE, false) & GPIO_PIN_4) {
-        // PF4 was interrupt cause
-        printf("Button Up\n");
-        GPIOIntRegister(GPIO_PORTF_BASE, onButtonDown); // Register our handler function for port F
-        GPIOIntTypeSet(GPIO_PORTF_BASE, GPIO_PIN_4,
-            GPIO_FALLING_EDGE);         // Configure PF4 for falling edge trigger
-        GPIOIntClear(GPIO_PORTF_BASE, GPIO_PIN_4);  // Clear interrupt flag
-       // GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2,255);
+
+
+    void Timer0IntHandler(void)
+
+    {
+
+
+        TimerIntClear( TIMER0_BASE, TIMER_TIMA_TIMEOUT );
+
+        condicao = !condicao;
+        // Clear the timer interrupt
+
+        if (condicao == true){
+            GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 255);
+            ++N_eventos;
+        }
+       // GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 0);
+
+        // Read the current state of the GPIO pin and
+
+        // write back the opposite state
+
+        if( GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_2) ) {
+
+            GPIOPinWrite( GPIO_PORTF_BASE, GPIO_PIN_1 | GPIO_PIN_2 | GPIO_PIN_3, 0 );
+
+        } else {
+
+           GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_2, 4);
+           GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_1, 0);
+
+        }
+
     }
-}
-
-int main(void) {
-    SysCtlClockSet(SYSCTL_SYSDIV_2_5| SYSCTL_USE_PLL | SYSCTL_OSC_INT | SYSCTL_XTAL_16MHZ);
-
-    // Pin F4 setup
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);        // Enable port F
-//    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
-    GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_4);  // Init PF4 as input
-    GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_4,
-        GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);  // Enable weak pullup resistor for PF4
-
-    // Interrupt setuü
-    GPIOIntDisable(GPIO_PORTF_BASE, GPIO_PIN_4);        // Disable interrupt for PF4 (in case it was enabled)
-    GPIOIntClear(GPIO_PORTF_BASE, GPIO_PIN_4);      // Clear pending interrupts for PF4
-    GPIOIntRegister(GPIO_PORTF_BASE, onButtonDown);     // Register our handler function for port F
-    GPIOIntTypeSet(GPIO_PORTF_BASE, GPIO_PIN_4,
-        GPIO_FALLING_EDGE);             // Configure PF4 for falling edge trigger
-    GPIOIntEnable(GPIO_PORTF_BASE, GPIO_PIN_4);     // Enable interrupt for PF4
-
-    while(1);
-}
