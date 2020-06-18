@@ -22,6 +22,8 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/pwm.h"
 #include "driverlib/uart.h"
+#include "driverlib/rom_map.h"
+#include "driverlib/rom.h"
 
 
 
@@ -42,8 +44,5 @@ void setup(void);
 */
 void led_pin_config(void);
 
-void setup_pwm(uint32_t period);
-
-void setup_serial(int BaudRate);
 
 #endif /* SETUP_H_ */

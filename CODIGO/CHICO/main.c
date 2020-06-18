@@ -31,15 +31,23 @@
 #include "nrf24l01.h"
 #include "setup.h"
 #include "Comunicacao.h"
-
+#include "driverlib/timer.h"
+#include "ADC.h"
+#include "protocolo.h"
+#define id_robo  0b0000001
 struct nrf24l01p nrf;
 uint8_t addresses[][6] = {"1Node","2Node"};
 //int i;
 
+// Variaveis Globais
+     volatile bool condicao = true;
+     volatile uint32_t Count_time = 0;
+     volatile uint32_t send_time = 0;
+     volatile uint16_t tempo_passo = 0;
 
 int main(void) {
 
-  //  uint8_t ui8LED = 2;
+    uint32_t ui32Period;
     //
     // Enable lazy stacking for interrupt handlers.  This allows floating-point
     // instructions to be used within interrupt handlers, but at the expense of
@@ -48,33 +56,27 @@ int main(void) {
     FPULazyStackingEnable();
     FPUEnable();
 
-
+    // Funções de configuração
 
     setup();
+    setup_serial(115200);
+    setup_pwm(5000);
+    ConfigurarADC(SYSCTL_PERIPH_GPIOE,GPIO_PORTE_BASE,GPIO_PIN_0|GPIO_PIN_3);
 
     IntMasterEnable();
 
     led_pin_config();
 
+    // configuração do timer para interrupcao
 
-
-    // Kich hoat uart0
-           SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-           SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-           //Cau hinh chan PA0 va PA1 lan luot la chan RX va TX
-           GPIOPinConfigure(GPIO_PA0_U0RX);
-           GPIOPinConfigure(GPIO_PA1_U0TX);
-           GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);  //Thieu dinh nghia pin pa1 pa0 la chan cua UART
-           //Cau hinh uart 0 baud 115200
-           UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 9600, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
-
-
-
-    setup();
-
+    SysCtlPeripheralEnable( SYSCTL_PERIPH_TIMER0 );
+    TimerConfigure( TIMER0_BASE, TIMER_CFG_PERIODIC );
+    ui32Period = ( SysCtlClockGet()*0.0005);
+    TimerLoadSet( TIMER0_BASE, TIMER_A, ui32Period - 1 );
+    IntEnable( INT_TIMER0A );
+    TimerIntEnable( TIMER0_BASE, TIMER_TIMA_TIMEOUT );
     IntMasterEnable();
-
-    led_pin_config();
+    TimerEnable( TIMER0_BASE, TIMER_A );
 
     //set up the radio
     if( !nrf24l01p_setup(&nrf, GPIO_PORTA_BASE, GPIO_PIN_6, GPIO_PORTC_BASE, GPIO_PIN_4, SSI0_BASE) ){
@@ -89,55 +91,35 @@ int main(void) {
 
     uint8_t recebido[6];
 
-    uint8_t envio[6] = "maraca";
     while(1){
 
-      nrf24l01p_stop_listening(&nrf);        // First, stop listening so we can talk
-        nrf24l01p_write(&nrf, &envio, sizeof(envio)); // Send the final one back.
        nrf24l01p_start_listening(&nrf); // Now, resume listening so we catch the next packets.
+       if (nrf24l01p_available(&nrf)) {
 
-        if (nrf24l01p_available(&nrf)) {
-
-                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1|GPIO_PIN_3, 0);
-                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 255);
-               SysCtlDelay(50000);
                 nrf24l01p_read(&nrf, &recebido, sizeof(recebido));     // Get the payload
-
-                UARTCharPut(UART0_BASE, recebido[0]);
-                UARTCharPut(UART0_BASE, recebido[1]);
-                UARTCharPut(UART0_BASE, recebido[2]);
-                UARTCharPut(UART0_BASE, recebido[3]);
-                UARTCharPut(UART0_BASE, recebido[4]);
-                UARTCharPut(UART0_BASE, recebido[5]);
-                UARTCharPut(UART0_BASE, '\n');
-
-                SysCtlDelay(100000);
-                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 0);
-      //      nrf24l01p_stop_listening(&nrf);        // First, stop listening so we can talk
-      //      nrf24l01p_write(&nrf, &envio, sizeof(envio)); // Send the final one back.
-       //     nrf24l01p_start_listening(&nrf); // Now, resume listening so we catch the next packets.
-       //         ++i ;
-
-      //  }
-
-//            if(recebido[0]==envio[0]){
-//                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 0);
-//                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_3, 255);
-//               // SysCtlDelay(5000000);
-//
-//            }else{
-//                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_2, 0);
-//                GPIOPinWrite(GPIO_PORTF_BASE,GPIO_PIN_1, 255);
-//               // SysCtlDelay(20000000);
-//            }
-
+                GetComando(recebido);   // pegar o comando e executa-lo
         }
+        if (send_time >= 5000){
+            send_dados();  // envia os dados pro PC
+            send_time = 0;
+            }
+        }
+}
+
+// rotina de interrupcão
+
+void Timer0IntHandler(void)
+
+{
+    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 0);
+    TimerIntClear( TIMER0_BASE, TIMER_TIMA_TIMEOUT );
+    condicao = !condicao;
+    // Clear the timer interrupt
+    if (condicao == true){
+        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 255);
+        ++Count_time;
+        ++send_time;  // tempo para começar a enviar dados pro PC
+        ++tempo_passo;
         }
 
-//      //give it a little space
-//      SysCtlDelay((SysCtlClockGet() >> 12) * 5);
-
-
-
-    //return 0;
 }

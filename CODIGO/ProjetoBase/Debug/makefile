@@ -11,8 +11,9 @@ GEN_CMDS__FLAG :=
 
 ORDERED_OBJS += \
 "./main.obj" \
+"./setpin.obj" \
 "./tm4c123gh6pm_startup_ccs.obj" \
-"C:/ti/TivaWare_C_Series-2.1.2.111/driverlib/ccs/Debug/driverlib.lib" \
+"C:/Users/Cristiano Pontes/ti/Tivaware_C_Series-1.1/Tivaware-master/driverlib/ccs/Debug/driverlib.lib" \
 $(GEN_CMDS__FLAG) \
 -llibc.a \
 
@@ -155,8 +156,8 @@ ProjetoBase.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "main.obj" "tm4c123gh6pm_startup_ccs.obj" 
-	-$(RM) "main.d" "tm4c123gh6pm_startup_ccs.d" 
+	-$(RM) "main.obj" "setpin.obj" "tm4c123gh6pm_startup_ccs.obj" 
+	-$(RM) "main.d" "setpin.d" "tm4c123gh6pm_startup_ccs.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

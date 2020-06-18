@@ -38,7 +38,7 @@
 void setup(void)
 {
 	SysCtlClockSet(SYSCTL_SYSDIV_4|SYSCTL_USE_PLL|SYSCTL_XTAL_16MHZ|SYSCTL_OSC_MAIN);
-	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+
 }
 
 /*
@@ -50,6 +50,7 @@ void setup(void)
 */
 void led_pin_config(void)
 {
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
 	GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3);
 }
 
@@ -58,8 +59,9 @@ int main(void)
 {
 	uint8_t ui8LED = 2;
 
-	setup();
-	led_pin_config();
+	SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_XTAL_16MHZ | SYSCTL_OSC_MAIN);
+	SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    GPIOPinTypeGPIOOutput(GPIO_PORTF_BASE, GPIO_PIN_1|GPIO_PIN_2|GPIO_PIN_3);
 
 	while(1)
 	{

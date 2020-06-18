@@ -197,20 +197,20 @@ int nrf24l01p_setup(struct nrf24l01p *nrf,
 	nrf->payload_size = 32;
 	nrf->pipe0_reading_address[0]=0;
 
-	if(SSI_BASE == SSI0_BASE){
+	if(SSI_BASE == SSI1_BASE){
 	    //Habilitando o Clock para os perifericos
 		SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
 
 		//CSN - Escolher algum pino da porta A, cujo clock ja foi habilitado:
 		GPIOPinTypeGPIOOutput(CSN_PIN_BASE, CSN_PIN); //Configura o pino CSN como saida
 		GPIOPinWrite(CSN_PIN_BASE, CSN_PIN, CSN_PIN); //Inicializa ele em 1
 
 		//Configuracao da SPI0:
-        GPIOPinConfigure(GPIO_PA2_SSI0CLK);
-		GPIOPinConfigure(GPIO_PA4_SSI0RX);
-		GPIOPinConfigure(GPIO_PA5_SSI0TX);
-		GPIOPinTypeSSI(GPIO_PORTA_BASE, GPIO_PIN_5|GPIO_PIN_4|GPIO_PIN_2);
+        GPIOPinConfigure(GPIO_PF2_SSI1CLK);
+		GPIOPinConfigure(GPIO_PF0_SSI1RX);
+		GPIOPinConfigure(GPIO_PF1_SSI1TX);
+		GPIOPinTypeSSI(GPIO_PORTF_BASE, GPIO_PIN_2|GPIO_PIN_0|GPIO_PIN_1);
 	}
 	//TODO: other bases
 
@@ -218,9 +218,9 @@ int nrf24l01p_setup(struct nrf24l01p *nrf,
 
 	//Gambiarra feita por quem escreveu a biblioteca, se escolher um pino para CE fora
 	//da porta C, nao vai funcionar.
-	if(CE_PIN_BASE == GPIO_PORTC_BASE){
-		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOC);
-	}
+//	if(CE_PIN_BASE == GPIO_PORTA_BASE){
+		SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+//	}
 	//TODO: other bases
 	GPIOPinTypeGPIOOutput(CE_PIN_BASE, CE_PIN);
 

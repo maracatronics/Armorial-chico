@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>CHICO</name>
+	<name>Base_Station</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -28,13 +28,13 @@
 		<link>
 			<name>driverlib.lib</name>
 			<type>1</type>
-			<locationURI>TIVAWARE_INSTALL/Tivaware-master/driverlib/ccs/Debug/driverlib.lib</locationURI>
+			<locationURI>TIVAWARE_INSTALL/driverlib/ccs/Debug/driverlib.lib</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>
 		<variable>
 			<name>TIVAWARE_INSTALL</name>
-			<value>file:/C:/Users/Cristiano%20Pontes/ti/Tivaware_C_Series-1.1</value>
+			<value>file:/C:/Users/Cristiano%20Pontes/ti/Tivaware_C_Series-1.1/Tivaware-master</value>
 		</variable>
 	</variableList>
 </projectDescription>
