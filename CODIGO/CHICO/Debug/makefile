@@ -12,6 +12,7 @@ GEN_CMDS__FLAG :=
 ORDERED_OBJS += \
 "./ADC.obj" \
 "./Comunicacao.obj" \
+"./interrupcao.obj" \
 "./main.obj" \
 "./nrf24l01.obj" \
 "./protocolo.obj" \
@@ -162,8 +163,8 @@ CHICO.hex: $(EXE_OUTPUTS)
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "ADC.obj" "Comunicacao.obj" "main.obj" "nrf24l01.obj" "protocolo.obj" "setup.obj" "setup_tiva.obj" "tm4c123gh6pm_startup_ccs.obj" 
-	-$(RM) "ADC.d" "Comunicacao.d" "main.d" "nrf24l01.d" "protocolo.d" "setup.d" "setup_tiva.d" "tm4c123gh6pm_startup_ccs.d" 
+	-$(RM) "ADC.obj" "Comunicacao.obj" "interrupcao.obj" "main.obj" "nrf24l01.obj" "protocolo.obj" "setup.obj" "setup_tiva.obj" "tm4c123gh6pm_startup_ccs.obj" 
+	-$(RM) "ADC.d" "Comunicacao.d" "interrupcao.d" "main.d" "nrf24l01.d" "protocolo.d" "setup.d" "setup_tiva.d" "tm4c123gh6pm_startup_ccs.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

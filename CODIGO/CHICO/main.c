@@ -34,16 +34,12 @@
 #include "driverlib/timer.h"
 #include "ADC.h"
 #include "protocolo.h"
+#include "interrupcao.h"
 #define id_robo  0b0000001
 struct nrf24l01p nrf;
 uint8_t addresses[][6] = {"1Node","2Node"};
 //int i;
 
-// Variaveis Globais
-     volatile bool condicao = true;
-     volatile uint32_t Count_time = 0;
-     volatile uint32_t send_time = 0;
-     volatile uint16_t tempo_passo = 0;
 
 int main(void) {
 
@@ -69,14 +65,7 @@ int main(void) {
 
     // configuração do timer para interrupcao
 
-    SysCtlPeripheralEnable( SYSCTL_PERIPH_TIMER0 );
-    TimerConfigure( TIMER0_BASE, TIMER_CFG_PERIODIC );
-    ui32Period = ( SysCtlClockGet()*0.0005);
-    TimerLoadSet( TIMER0_BASE, TIMER_A, ui32Period - 1 );
-    IntEnable( INT_TIMER0A );
-    TimerIntEnable( TIMER0_BASE, TIMER_TIMA_TIMEOUT );
-    IntMasterEnable();
-    TimerEnable( TIMER0_BASE, TIMER_A );
+    TimerIntConfig();
 
     //set up the radio
     if( !nrf24l01p_setup(&nrf, GPIO_PORTA_BASE, GPIO_PIN_6, GPIO_PORTC_BASE, GPIO_PIN_4, SSI0_BASE) ){
@@ -99,27 +88,11 @@ int main(void) {
                 nrf24l01p_read(&nrf, &recebido, sizeof(recebido));     // Get the payload
                 GetComando(recebido);   // pegar o comando e executa-lo
         }
-        if (send_time >= 5000){
+        if (getTime() == 5000){
             send_dados();  // envia os dados pro PC
-            send_time = 0;
+            clearTime();
             }
         }
 }
 
-// rotina de interrupcão
 
-void Timer0IntHandler(void)
-
-{
-    GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 0);
-    TimerIntClear( TIMER0_BASE, TIMER_TIMA_TIMEOUT );
-    condicao = !condicao;
-    // Clear the timer interrupt
-    if (condicao == true){
-        GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_3, 255);
-        ++Count_time;
-        ++send_time;  // tempo para começar a enviar dados pro PC
-        ++tempo_passo;
-        }
-
-}

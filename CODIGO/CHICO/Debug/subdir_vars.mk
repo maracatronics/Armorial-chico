@@ -14,6 +14,7 @@ C:/Users/Cristiano\ Pontes/ti/Tivaware_C_Series-1.1/Tivaware-master/driverlib/cc
 C_SRCS += \
 ../ADC.c \
 ../Comunicacao.c \
+../interrupcao.c \
 ../main.c \
 ../nrf24l01.c \
 ../protocolo.c \
@@ -24,6 +25,7 @@ C_SRCS += \
 C_DEPS += \
 ./ADC.d \
 ./Comunicacao.d \
+./interrupcao.d \
 ./main.d \
 ./nrf24l01.d \
 ./protocolo.d \
@@ -34,6 +36,7 @@ C_DEPS += \
 OBJS += \
 ./ADC.obj \
 ./Comunicacao.obj \
+./interrupcao.obj \
 ./main.obj \
 ./nrf24l01.obj \
 ./protocolo.obj \
@@ -44,6 +47,7 @@ OBJS += \
 OBJS__QUOTED += \
 "ADC.obj" \
 "Comunicacao.obj" \
+"interrupcao.obj" \
 "main.obj" \
 "nrf24l01.obj" \
 "protocolo.obj" \
@@ -54,6 +58,7 @@ OBJS__QUOTED += \
 C_DEPS__QUOTED += \
 "ADC.d" \
 "Comunicacao.d" \
+"interrupcao.d" \
 "main.d" \
 "nrf24l01.d" \
 "protocolo.d" \
@@ -64,6 +69,7 @@ C_DEPS__QUOTED += \
 C_SRCS__QUOTED += \
 "../ADC.c" \
 "../Comunicacao.c" \
+"../interrupcao.c" \
 "../main.c" \
 "../nrf24l01.c" \
 "../protocolo.c" \
