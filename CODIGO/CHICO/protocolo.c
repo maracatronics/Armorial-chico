@@ -78,10 +78,12 @@ void chute (int type_chute){
      // chute normal
      case 1:
          GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_7, 255);
+         GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_7, 0);
          break;
      // chip kick
      case 2:
          GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_0, 255);
+         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_0, 0);
          break;
 
      }
