@@ -8,6 +8,7 @@
 #define id_robo  0b0000001
 bool cap;
 bool ang;
+float constant = 0.059584859584;
 
 void GetComando(uint8_t *recebido){   // vai pegar o comando e fazer uma ação a partir disso
 
@@ -62,12 +63,12 @@ bool CarregarCapacitor(uint8_t potencia){ // verifica tensao do capacitor e o ca
        if ((potencia & 0b0000011) == 0b0000011){ // chute forte
            pot = 180; // valor aleatorio
        }
-       cargaCapacitor = GetADC(1); //leitura do capacitor
+       cargaCapacitor = constant*ADCRead(&pe3); //leitura do capacitor
        if(cargaCapacitor >= pot){
            return 1;
        }
        else{
-       PWMPulseWidthSet(PWM1_BASE, PWM_OUT_5,0);  // pwm terá um tamanho minimo de onda para ter um frequencia maxima de carregamento
+          pwmWrite(&pc5,0);;  // pwm terá um tamanho minimo de onda para ter um frequencia maxima de carregamento
           return 0;
        }
 
@@ -77,13 +78,13 @@ void chute (int type_chute){
      switch(type_chute){
      // chute normal
      case 1:
-         GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_7, 255);
-         GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_7, 0);
+         pinWrite(&pa7,255);
+         pinWrite(&pa7,0);
          break;
      // chip kick
      case 2:
-         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_0, 255);
-         GPIOPinWrite(GPIO_PORTF_BASE, GPIO_PIN_0, 0);
+         pinWrite(&pf0,255);
+         pinWrite(&pf0,0);
          break;
 
      }
@@ -92,9 +93,9 @@ void send_dados(){
     uint8_t envio[6];
     struct nrf24l01p nrf;
     envio[0] = id_robo;    // envia id do robo, como temos 6, cada robo vai ter um id sendo de 1 a 6
-    envio[1] = GetADC(0);  // status da bateria
-    envio[2] = GetADC(1);  // status do capacitor
-    envio[3] = GPIOPinRead(GPIO_PORTE_BASE, GPIO_PIN_4); //status do sensor infravermelho
+    envio[1] = constant*ADCRead(&pe0);  // status da bateria
+    envio[2] = constant*ADCRead(&pe3);  // status do capacitor
+    envio[3] = pinRead(&pe4); //status do sensor infravermelho
     envio[4] = cap;   // kick enabled
     envio[5] = ang;
 

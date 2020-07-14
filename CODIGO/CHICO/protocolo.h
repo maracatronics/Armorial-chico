@@ -24,7 +24,7 @@
 #include "setup.h"
 #include "Comunicacao.h"
 #include "driverlib/pwm.h"
-#include "ADC.h"
+#include "setpin.h"
 #include "nrf24l01.h"
 
 void GetComando(uint8_t *recebido);

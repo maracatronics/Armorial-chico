@@ -4,18 +4,18 @@
 
 SHELL = cmd.exe
 
-CG_TOOL_ROOT := C:/Users/Cristiano Pontes/Desktop/ccs/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS
+CG_TOOL_ROOT := C:/Users/Desktop/ccs/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS
 
 GEN_OPTS__FLAG := 
 GEN_CMDS__FLAG := 
 
 ORDERED_OBJS += \
-"./ADC.obj" \
 "./Comunicacao.obj" \
 "./interrupcao.obj" \
 "./main.obj" \
 "./nrf24l01.obj" \
 "./protocolo.obj" \
+"./setpin.obj" \
 "./setup.obj" \
 "./setup_tiva.obj" \
 "./tm4c123gh6pm_startup_ccs.obj" \
@@ -149,22 +149,22 @@ all: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 CHICO.out: $(OBJS) $(CMD_SRCS) $(LIB_SRCS) $(GEN_CMDS)
 	@echo 'Building target: "$@"'
 	@echo 'Invoking: ARM Linker'
-	"C:/Users/Cristiano Pontes/Desktop/ccs/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"CHICO.map" --heap_size=0 --stack_size=512 -i"C:/Users/Cristiano Pontes/Desktop/ccs/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/lib" -i"C:/Users/Cristiano Pontes/Desktop/ccs/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="CHICO_linkInfo.xml" --rom_model -o "CHICO.out" $(ORDERED_OBJS)
+	"C:/Users/Desktop/ccs/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/bin/armcl" -mv7M4 --code_state=16 --float_support=FPv4SPD16 -me --define=ccs="ccs" --define=PART_TM4C123GH6PM -g --gcc --diag_warning=225 --diag_wrap=off --display_error_number --abi=eabi -z -m"CHICO.map" --heap_size=0 --stack_size=512 -i"C:/Users/Desktop/ccs/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/lib" -i"C:/Users/Desktop/ccs/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/include" --reread_libs --diag_wrap=off --display_error_number --warn_sections --xml_link_info="CHICO_linkInfo.xml" --rom_model -o "CHICO.out" $(ORDERED_OBJS)
 	@echo 'Finished building target: "$@"'
 	@echo ' '
 
 CHICO.hex: $(EXE_OUTPUTS)
 	@echo 'Building files: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo 'Invoking: ARM Hex Utility'
-	"C:/Users/Cristiano Pontes/Desktop/ccs/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/bin/armhex"  -o "CHICO.hex" $(EXE_OUTPUTS__QUOTED)
+	"C:/Users/Desktop/ccs/ccs/tools/compiler/ti-cgt-arm_18.12.4.LTS/bin/armhex"  -o "CHICO.hex" $(EXE_OUTPUTS__QUOTED)
 	@echo 'Finished building: $(strip $(EXE_OUTPUTS__QUOTED))'
 	@echo ' '
 
 # Other Targets
 clean:
 	-$(RM) $(BIN_OUTPUTS__QUOTED)$(EXE_OUTPUTS__QUOTED)
-	-$(RM) "ADC.obj" "Comunicacao.obj" "interrupcao.obj" "main.obj" "nrf24l01.obj" "protocolo.obj" "setup.obj" "setup_tiva.obj" "tm4c123gh6pm_startup_ccs.obj" 
-	-$(RM) "ADC.d" "Comunicacao.d" "interrupcao.d" "main.d" "nrf24l01.d" "protocolo.d" "setup.d" "setup_tiva.d" "tm4c123gh6pm_startup_ccs.d" 
+	-$(RM) "Comunicacao.obj" "interrupcao.obj" "main.obj" "nrf24l01.obj" "protocolo.obj" "setpin.obj" "setup.obj" "setup_tiva.obj" "tm4c123gh6pm_startup_ccs.obj" 
+	-$(RM) "Comunicacao.d" "interrupcao.d" "main.d" "nrf24l01.d" "protocolo.d" "setpin.d" "setup.d" "setup_tiva.d" "tm4c123gh6pm_startup_ccs.d" 
 	-@echo 'Finished clean'
 	-@echo ' '
 

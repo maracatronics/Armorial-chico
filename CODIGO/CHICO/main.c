@@ -32,7 +32,7 @@
 #include "setup.h"
 #include "Comunicacao.h"
 #include "driverlib/timer.h"
-#include "ADC.h"
+#include "setpin.h"
 #include "protocolo.h"
 #include "interrupcao.h"
 #define id_robo  0b0000001
@@ -42,8 +42,7 @@ uint8_t addresses[][6] = {"1Node","2Node"};
 
 
 int main(void) {
-
-    uint32_t ui32Period;
+    startPINS();
     //
     // Enable lazy stacking for interrupt handlers.  This allows floating-point
     // instructions to be used within interrupt handlers, but at the expense of
@@ -56,12 +55,47 @@ int main(void) {
 
     setup();
     setup_serial(115200);
-    setup_pwm(5000);
-    ConfigurarADC(SYSCTL_PERIPH_GPIOE,GPIO_PORTE_BASE,GPIO_PIN_0|GPIO_PIN_3);
+
+    // pinos pwms:
+
+    pwmMode(&pb4,5000);  // pwm_roda_1
+    pwmMode(&pf3,5000);  // pwm_roda_2
+    pwmMode(&pb6,5000);  // pwm_roda_3
+    pwmMode(&pc6,5000);  // pwm_roda_4
+    pwmMode(&pc7,5000);  // chute_pwm
+    pwmMode(&pc5,5000);  // drible
+
+    // pinos adcs:
+
+    ADCMode(&pe0,0);     // LEITURA_BATERIA
+    ADCMode(&pe3,1);     // Chute_PWM
+
+    // pinos inputs
+
+    setIO(&pe4,1);       // INFRA
+    setIO(&pb5,1);       // HALL1_1
+    setIO(&pb0,1);       // HALL1_2
+    setIO(&pd6,1);       // HALL2_1
+    setIO(&pe1,1);       // HALL2_2
+    setIO(&pb7,1);       // HALL3_1
+    setIO(&pb3,1);       // HALL3_2
+    setIO(&pd2,1);       // HALL4_1
+    setIO(&pd3,1);       // HALL4_2
+    setIO(&pd0,1);       // IN1
+    setIO(&pd1,1);       // IN2
+    setIO(&pb1,1);       // IN3
+    setIO(&pf4,1);       // IN4
+
+    // pinos OUTPUTS:
+
+    setIO(&pe5,0);       // FWD/REV1
+    setIO(&pd7,0);       // FWD/REV2
+    setIO(&pa3,0);       // FWD/REV3
+    setIO(&pb2,0);       // FWD/REV4
+    setIO(&pa7,0);       // DISPARO_CHUTE_1
+    setIO(&pf0,0);       // DISPARO_CHUTE_2
 
     IntMasterEnable();
-
-    led_pin_config();
 
     // configuração do timer para interrupcao
 
@@ -88,7 +122,7 @@ int main(void) {
                 nrf24l01p_read(&nrf, &recebido, sizeof(recebido));     // Get the payload
                 GetComando(recebido);   // pegar o comando e executa-lo
         }
-        if (getTime() == 5000){
+        if (getTime() >= 5000){
             send_dados();  // envia os dados pro PC
             clearTime();
             }
